@@ -75,7 +75,7 @@ public class UserService {
 	public List<User> search(UserSearchForm form, boolean isAdmin) {
 		String role = isAdmin ? "ADMIN" : "USER";
 		if (form.getName() != null && form.getName() != "") {
-			String name = form.getName().replaceAll("[\\*\\s=']", "");
+			String name = form.getName();
 
 			String sql = "SELECT * FROM users WHERE name = :name";
 			if (!isAdmin) {
