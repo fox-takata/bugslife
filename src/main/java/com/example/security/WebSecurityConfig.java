@@ -46,7 +46,7 @@ public class WebSecurityConfig {
 				})
 				.exceptionHandling((exception) -> exception
 						.accessDeniedHandler((request, response, accessDeniedException) -> {
-							response.sendRedirect("https://www.google.co.jp");
+							response.sendRedirect("/user");
 						}));
 
 		return http.build();
