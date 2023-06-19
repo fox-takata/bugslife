@@ -27,7 +27,7 @@
           <td class="text-overflow">
             <a th:href="${app.url}" target="_blank" th:text="${app.url}"></a>
           </td>
-          <td class="for-tablet text-overflow" th:text="${app.description}"></td>
+          <td class="for-tablet text-overflow" th:text="${#strings.length(app.description) &gt; 10 ? #strings.substring(app.description, 0, 10) + '  ...' : app.description}"></td>
           <td>
             <!-- 画像があれば縮小して表示 -->
             <img
@@ -37,7 +37,7 @@
               style="max-width: 100px; max-height: 100px"
             />
           </td>
-          <td class="for-tablet" th:text="${app.developer}"></td>
+          <td class="for-tablet" th:text="${#strings.length(app.developer) &gt; 10 ? #strings.substring(app.developer, 0, 10) + '  ...' : app.developer}"></td>
           <td>
             <a class="btn btn-primary" th:href="@{/apps/{id}(id = ${app.id})}"
             >Show</a
