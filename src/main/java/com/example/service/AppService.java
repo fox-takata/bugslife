@@ -25,6 +25,7 @@ public class AppService {
 
 	@Transactional(readOnly = false)
 	public App save(App entity) {
+		entity.setUrl(entity.getName());
 		return appRepository.save(entity);
 	}
 
