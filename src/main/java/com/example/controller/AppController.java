@@ -22,6 +22,7 @@ import com.example.constants.Message;
 import com.example.model.App;
 import com.example.service.AppService;
 import com.example.utils.CheckUtil;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/apps")
@@ -56,17 +57,22 @@ public class AppController {
 	public String create(@Validated @ModelAttribute App entity, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 		App app = null;
+		String regex = "^(https?|http)?://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$";
 		try {
 			// descriptionは2000文字まで
 			if (!CheckUtil.checkDescriptionLength(entity.getDescription())) {
 				// NG
 				redirectAttributes.addFlashAttribute("error", Message.MSG_VALIDATE_ERROR);
 				return "redirect:/apps";
+			} else if (entity.getUrl().isEmpty() || Pattern.matches(regex, entity.getUrl())) {
+				app = appService.save(entity);
+				redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_INSERT);
+				return "redirect:/apps/" + app.getId();
+			} else {
+				// NG
+				redirectAttributes.addFlashAttribute("error", Message.MSG_VALIDATE_ERROR);
+				return "redirect:/apps";
 			}
-
-			app = appService.save(entity);
-			redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_INSERT);
-			return "redirect:/apps/" + app.getId();
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", Message.MSG_ERROR);
 			e.printStackTrace();
@@ -91,17 +97,21 @@ public class AppController {
 	public String update(@Validated @ModelAttribute App entity, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 		App app = null;
+		String regex = "^(https?|http)?://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$";
 		try {
 			// descriptionは2000文字まで
 			if (!CheckUtil.checkDescriptionLength(entity.getDescription())) {
 				// NG
 				redirectAttributes.addFlashAttribute("error", Message.MSG_VALIDATE_ERROR);
 				return "redirect:/apps";
+			} else if (entity.getUrl().isEmpty() || Pattern.matches(regex, entity.getUrl())) {
+				app = appService.save(entity);
+				redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_UPDATE);
+				return "redirect:/apps/" + app.getId();
+			} else {
+				redirectAttributes.addFlashAttribute("error", Message.MSG_VALIDATE_ERROR);
+				return "redirect:/apps";
 			}
-
-			app = appService.save(entity);
-			redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_UPDATE);
-			return "redirect:/apps/" + app.getId();
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", Message.MSG_ERROR);
 			e.printStackTrace();
