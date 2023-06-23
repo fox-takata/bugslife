@@ -11,6 +11,8 @@
 span.font-impact {
   font-family: "Impact";
   font-size: small;
+  font-family: "Segoe UI", "Arial", sans-serif;
+  -webkit-text-stroke: 0.2px; /* 追加 */
 }
 
 a.btn {
@@ -33,7 +35,7 @@ a.btn-link {
 }
 
 /* タブレット */
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
   /* 一覧 */
   .for-tablet {
     display: none;
@@ -43,7 +45,10 @@ a.btn-link {
     height: 3000px;
   }
   span.font-impact {
-    font-size: x-large;
+    /* font-size: x-large; */
+    font-weight: normal;
+    font-family: "Segoe UI", "Arial", sans-serif;
+    -webkit-text-stroke: 0.2px; /* 追加 */
   }
 }
 
@@ -53,11 +58,44 @@ a.btn-link {
   .for-pc.for-tablet {
     display: none;
   }
-  
+
   .app-show-container {
     width: 1500px;
   }
   span.font-impact {
-    font-size: xx-large;
+    /* font-size: xx-large; */
+    font-weight: normal;
+    font-family: "Segoe UI", "Arial", sans-serif;
+    -webkit-text-stroke: 0.2px; /* 追加 */
   }
+}
+
+.btn-info {
+  background-color: rgb(255, 55, 55);
+  border-color: red;
+  color: #fff;
+}
+.btn-info:hover {
+  /* カーソルが乗ったときのスタイル */
+  background-color: #990c0c;
+  /* カーソルが乗ったときの他のスタイルプロパティ */
+  border-color: red;
+}
+
+.btn-warning {
+  background-color: rgb(68, 68, 255);
+  border-color: blue;
+  color: #fff;
+}
+
+.btn-warning:hover {
+  /* カーソルが乗ったときのスタイル */
+  background-color: #3742db;
+  /* カーソルが乗ったときの他のスタイルプロパティ */
+  border-color: blue;
+}
+
+.text-right {
+  background-color: gray;
+  color: #fff;
 }
