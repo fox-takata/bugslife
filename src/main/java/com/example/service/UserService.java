@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,6 +31,8 @@ public class UserService {
 
 	@Autowired
 	private DeletedUserRepository deletedUserRepository;
+
+	PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
 	public List<User> findAll() {
 		return userRepository.findAll();
@@ -46,7 +50,7 @@ public class UserService {
 		/**
 		 * パスワードをjavaの暗号化方式を付与する
 		 */
-		entity.setPassword("{noop}" + entity.getPassword());
+		entity.setPassword(encoder.encode(entity.getPassword()));
 		return userRepository.save(entity);
 	}
 
