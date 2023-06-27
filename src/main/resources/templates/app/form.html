@@ -23,19 +23,29 @@
           type="text"
           class="form-control"
           th:field="*{name}"
-          style ='height: 200px; width: max-content;'
+          style ='width: max-content;'
+        />
+      </div>
+      <div class="form-group">
+        <label for="url">Url</label>
+        <input
+          id="url"
+          name="url"
+          type="url"
+          class="form-control"
+          th:field="*{url}"
+          style ='max-height: 200px; width: max-content;'
         />
       </div>
       <div class="form-group">
         <label for="description">Description</label>
-        <input
+        <textarea
           id="description"
           name="description"
-          type="text"
           class="form-control"
           th:field="*{description}"
-          style ='height: 200px; width: max-content;'
-        />
+          style ='height: 200px; width: max-content; overflow: auto;'
+        ></textarea>
       </div>
       <div class="form-group">
         <label for="image_file-lg">Image</label>
