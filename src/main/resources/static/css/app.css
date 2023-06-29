@@ -99,3 +99,10 @@ a.btn-link {
   background-color: gray;
   color: #fff;
 }
+
+.form-control-lg {
+  position: relative;
+    border: 1px solid #ccc;
+    padding: 8px;
+    width: 100%;
+}
