@@ -23,7 +23,6 @@
           type="text"
           class="form-control"
           th:field="*{name}"
-          style ='width: max-content;'
         />
       </div>
       <div class="form-group">
@@ -34,7 +33,7 @@
           type="url"
           class="form-control"
           th:field="*{url}"
-          style ='max-height: 200px; width: max-content;'
+          style ='max-height: 200px;'
         />
       </div>
       <div class="form-group">
@@ -44,17 +43,21 @@
           name="description"
           class="form-control"
           th:field="*{description}"
-          style ='height: 200px; width: max-content; overflow: auto;'
+          style ='height: 200px; overflow: auto;'
         ></textarea>
       </div>
       <div class="form-group">
         <label for="image_file-lg">Image</label>
+      </div>
+      <div class="form-group">
         <input
           id="image_file"
           name="image_file"
           type="file"
           class="form-control-lg"
         />
+      </div>
+      <div class="form-group">
         <!-- 画像があれば縮小して表示 -->
         <img
           th:if="${app.image != null && app.image != ''}"
@@ -73,7 +76,6 @@
           type="text"
           class="form-control"
           th:field="*{developer}"
-          style ='height: 200px; width: max-content;'
         />
       </div>
       <div class="form-check">
