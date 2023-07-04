@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -111,21 +112,27 @@ public class CampaignService {
 	 * @param nexStatus 更新後ステータス
 	 * @throws Exception
 	 */
-	@Transactional(readOnly = false, rollbackFor = RuntimeException.class)
+	@Transactional(rollbackFor = RuntimeException.class)
 	public void bulkStatusUpdate(List<Long> idList, CampaignStatus nexStatus) throws Exception {
+		List<Campaign> updatedcampaigns = new ArrayList<>();
 		try {
-			idList.forEach(id -> {
-				Campaign campaign = campaignRepository.findById(id).get();
+			for (Long id : idList) {
+				Campaign campaign = campaignRepository.findById(id)
+						.orElseThrow(() -> new RuntimeException("ID " + id + " に対応する campaign が見つかりませんでした。"));
+
 				// 更新前後のステータスが同じ場合はエラー
 				if (nexStatus.getId() == campaign.getStatus().getId()) {
 					throw new RuntimeException(campaign.getName() + "にステータスの変更がないため、ステータスの一括更新に失敗しました。");
 				}
+
 				campaign.setStatus(nexStatus);
-				campaignRepository.save(campaign);
-			});
+				updatedcampaigns.add(campaign);
+			}
+			updatedcampaigns.forEach(campaignRepository::save);
 		} catch (RuntimeException e) {
-			throw new Exception(e.getMessage());
+			// throw new Exception(e.getMessage());
+			// ロールバックするために RuntimeException をスロー
+			throw new RuntimeException(e.getMessage());
 		}
 	}
-
 }
