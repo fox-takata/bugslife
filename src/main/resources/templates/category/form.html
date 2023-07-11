@@ -24,6 +24,10 @@
           type="text"
           class="form-control"
           th:field="*{code}"
+          placeholder="半角大文字アルファベット3文字 + ハイフン + 半角数字3文字の形式で入力してください。"
+          pattern="[A-Z]{3}-\d{3}"
+          title="半角大文字アルファベット3文字 + ハイフン + 半角数字3文字の形式で入力してください。"
+          required
         />
       </div>
       <div class="form-group">
@@ -34,6 +38,11 @@
           type="text"
           class="form-control"
           th:field="*{name}"
+          placeholder="1文字以上、20文字以内で入力してください。"
+          minlength="1"
+          maxlength="20"
+          title="1文字以上、20文字以内で入力してください。"
+          required
         />
       </div>
       <div class="form-group">
@@ -44,12 +53,22 @@
           type="number"
           class="form-control"
           th:field="*{displayOrder}"
+          placeholder="0以上、999以下の数値を入力してください。"
+          min="0"
+          max="999"
+          title="0以上、999以下の数値を入力してください。"
+          required
         />
       </div>
       <div class="form-group">
-        <label>説明</label>
+        <label for="description">説明</label>
         <textarea
+          id="description"
+          name="description"
           class="form-control"
+          maxlength="300"
+          placeholder="任意: 300文字以内で入力してください。"
+          th:field="*{description}"
         ></textarea>
       </div>
 
@@ -58,3 +77,4 @@
     </form>
   </th:block>
 </html>
+<script src="/js/category/category-form.js"></script>
