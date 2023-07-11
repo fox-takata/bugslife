@@ -49,18 +49,30 @@ public class UnusedCampaignCodeValidator implements ConstraintValidator<UnusedCa
 		Long id = (Long)beanWrapper.getPropertyValue(fields[0]);
 		String code = (String)beanWrapper.getPropertyValue(fields[1]);
 
+		// 画面で入力したキャンペーンコードが空の場合はエラー
+		if (code == null || code.trim().isEmpty()) {
+			context.disableDefaultConstraintViolation();
+			context.buildConstraintViolationWithTemplate("キャンペーンコードを入力してください。")
+					.addPropertyNode(fields[1])
+					.addConstraintViolation();
+			return false;
+		}
+
 		// 画面で入力したキャンペーンコードを元にDBからキャンペーンを取得
 		Campaign campaign = service.findByCode(code).orElse(null);
 
-		// 登録済みのキャンペーンが存在しない場合は重複チェックを行わない
-		// かつ画面で入力したキャンペーンのIDとDBから取得したキャンペーンのIDが一致する場合は重複チェックを行わない
-		if (campaign == null) {
+		// 登録済みのキャンペーンが存在しない場合は重複チェックを行わない。
+		// または、画面で入力したキャンペーンのコードを持つIDと編集しているキャンペーンのIDが一致する場合は重複チェックを行わない
+		if (campaign == null || campaign.getId().equals(id)) {
 			return true;
 		}
-		context.disableDefaultConstraintViolation();
-		context.buildConstraintViolationWithTemplate(message).addPropertyNode(fields[1])
-				.addConstraintViolation();
+		// それ以外はエラーとする
+		else {
+			context.disableDefaultConstraintViolation();
+			context.buildConstraintViolationWithTemplate(message).addPropertyNode(fields[1])
+					.addConstraintViolation();
 
-		return false;
+			return false;
+		}
 	}
 }
