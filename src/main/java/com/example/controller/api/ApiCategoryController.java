@@ -1,7 +1,9 @@
 package com.example.controller.api;
 
 import com.example.service.CategoryService;
+import com.example.service.CategoryProductService;
 import com.example.model.Category;
+import com.example.model.CategoryProduct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +25,22 @@ public class ApiCategoryController {
 	@Autowired
 	private CategoryService categoryService;
 
+	@Autowired
+	private CategoryProductService categoryProductService;
+
 	@GetMapping("/all")
 	List<Category> findAll() {
 		return categoryService.findAll();
 	}
 
 	@GetMapping("/{id}")
-	Optional<Category> findOne(@PathVariable("id") Long id) {
-		Optional<Category> category = categoryService.findOne(id);
-		return category;
+	List<CategoryProduct> findByCategoryId(@PathVariable("id") Long id) {
+		return categoryProductService.findByCategoryId(id);
 	}
+	// Optional<Category> findOne(@PathVariable("id") Long id) {
+	// Optional<Category> category = categoryService.findOne(id);
+	// return category;
+	// }
 
 	@PostMapping("/{id}/updateCategoryProduct")
 	public ResponseEntity<String> deleteInsertCategoryProduct(@PathVariable("id") Long categoryId,

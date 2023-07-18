@@ -3,7 +3,7 @@ $(document).ready(function () {
   let action = document.getElementById("action").getAttribute("val");
 
   $.ajax({
-    url: "/api/category/" + categoryId,
+    url: "/api/categories/" + categoryId,
     type: "GET",
     dataType: "json",
   })
@@ -12,11 +12,13 @@ $(document).ready(function () {
       // チェックボックスにチェックを入れる処理
       categoryProducts.forEach(function (categoryProduct) {
         $("#checkbox-" + categoryProduct.productId).prop("checked", true);
+        console.log(categoryProduct.productId);
       });
     })
     .fail(function () {
       // APIコールが失敗した場合の処理
       console.log("APIコールが失敗しました。");
+      $("#error-message").text("APIコールが失敗しました。").show().fadeOut(3000);
     });
 
   $("#update-button").click(function () {
@@ -42,10 +44,15 @@ $(document).ready(function () {
       type: "POST",
       dataType: "text",
       contentType: "application/json",
-      data: postData,
+      data: JSON.stringify(postData),
     }).done(function (data) {
-      $("#success-message").text(data).show().fadeOut(3000);
-    });
+        $("#success-message").text(data).show().fadeOut(3000);
+      })
+      .fail(function () {
+        // APIコールが失敗した場合の処理
+        console.log("APIコールが失敗しました。");
+        $("#error-message").text("APIコールが失敗しました。").show().fadeOut(3000);
+      });
   });
 
   validation = function (checkedIds) {
