@@ -90,14 +90,24 @@ public class ProductService {
 			query.where(categoryJoin.get("id").in(form.getCategories()));
 		}
 
-		// weight で範囲検索
-		if (form.getWeight1() != null && form.getWeight2() != null) {
-			query.where(builder.between(root.get("weight"), form.getWeight1(), form.getWeight2()));
-		}
-
-		// height で範囲検索
+		// height で範囲検索（1つまたは2つの値が指定されている場合）
 		if (form.getHeight1() != null && form.getHeight2() != null) {
 			query.where(builder.between(root.get("height"), form.getHeight1(), form.getHeight2()));
+		} else if (form.getHeight1() != null) {
+			query.where(builder.greaterThanOrEqualTo(root.get("height"), form.getHeight1()));
+		} else if (form.getHeight2() != null) {
+			query.where(builder.lessThanOrEqualTo(root.get("height"), form.getHeight2()));
+		}
+
+		// weight で範囲検索（1つまたは2つの値が指定されている場合）
+		if (form.getWeight1() != null && form.getWeight2() != null) {
+			query.where(builder.between(root.get("weight"), form.getWeight1(), form.getWeight2()));
+		} else if (form.getWeight1() != null) {
+			// If weight1 is provided but weight2 is empty, filter products with weights
+			// greater than or equal to weight1
+			query.where(builder.greaterThanOrEqualTo(root.get("weight"), form.getWeight1()));
+		} else if (form.getWeight2() != null) {
+			query.where(builder.lessThanOrEqualTo(root.get("weight"), form.getWeight2()));
 		}
 
 		// price で範囲検索
