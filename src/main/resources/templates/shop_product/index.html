@@ -68,6 +68,7 @@
               class="form-control"
               name="weight1"
               th:field="*{weight1}"
+              placeholder="ここに最小の重さの値を入れてください。空でもOK"
             />
             <span class="input-group-text">〜</span>
             <input
@@ -75,6 +76,7 @@
               class="form-control"
               name="weight2"
               th:field="*{weight2}"
+              placeholder="ここに最大の重さの値を入れてください。空でもOK"
             />
           </div>
         </div>
@@ -86,6 +88,7 @@
               class="form-control"
               name="height1"
               th:field="*{height1}"
+              placeholder="ここに最小の高さの値を入れてください。空でもOK"
             />
             <span class="input-group-text">〜</span>
             <input
@@ -93,6 +96,7 @@
               class="form-control"
               name="height2"
               th:field="*{height2}"
+              placeholder="ここに最大の高さの値を入れてください。空でもOK"
             />
           </div>
         </div>
@@ -105,6 +109,7 @@
               class="form-control"
               name="price1"
               th:field="*{price1}"
+              placeholder="ここに最安の値段の値を入れてください。空でもOK"
             />
             <span class="input-group-text">〜</span>
             <input
@@ -113,6 +118,7 @@
               class="form-control"
               name="price2"
               th:field="*{price2}"
+              placeholder="ここに最大の値段の値を入れてください。空でもOK"
             />
           </div>
         </div>
@@ -141,9 +147,11 @@
           <td th:text="${product.code}"></td>
           <td>
             <span
+              th:each="category : ${product.categoryNames}"
               class="badge text-bg-info"
-              th:text="${product.categoryName}"
-            ></span>
+              th:text="${category}"
+            >
+            </span>
           </td>
           <td th:text="${product.weight}"></td>
           <td th:text="${product.height}"></td>

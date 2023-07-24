@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,7 +61,7 @@ public class ProductService {
 	// 指定された検索条件に一致するエンティティを検索する
 	public List<ProductWithCategoryName> search(Long shopId, ProductSearchForm form) {
 		final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		final CriteriaQuery<ProductWithCategoryName> query = builder.createQuery(ProductWithCategoryName.class);
+		final CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
 		final Root<Product> root = query.from(Product.class);
 
 		Join<Product, CategoryProduct> categoryProductJoin = root.joinList("categoryProducts");
@@ -119,7 +121,38 @@ public class ProductService {
 			query.where(builder.lessThanOrEqualTo(root.get("price"), form.getPrice2()));
 		}
 
-		return entityManager.createQuery(query).getResultList();
+		List<Object[]> results = entityManager.createQuery(query).getResultList();
+
+		// Map を使用して同じIDの商品を一時的に保持する
+		Map<Long, ProductWithCategoryName> productsMap = new HashMap<>();
+
+		// 検索結果を1行ずつ処理する
+		for (Object[] result : results) {
+			Long productId = (Long)result[0];
+			String categoryName = (String)result[6];
+
+			if (productsMap.containsKey(productId)) {
+				// 既に productsMap に同じIDの商品が存在する場合、その商品の categoryNames リストに新しいカテゴリー名を追加する
+				productsMap.get(productId).getCategoryNames().add(categoryName);
+			} else {
+				// productsMap に同じIDの商品が存在しない場合、新しい ProductWithCategoryName オブジェクトを作成し、そのオブジェクトを
+				// productsMap に追加する
+				List<String> categoryNames = new ArrayList<>();
+				categoryNames.add(categoryName);
+				ProductWithCategoryName product = new ProductWithCategoryName(
+						(Long)result[0],
+						(String)result[1],
+						(String)result[2],
+						(Integer)result[3],
+						(Integer)result[4],
+						(Integer)result[5],
+						categoryNames);
+				productsMap.put(productId, product);
+			}
+		}
+		System.out.println(new ArrayList<>(productsMap.values()).get(0));
+		// Map の値（ProductWithCategoryName オブジェクト）をリストに変換して返す
+		return new ArrayList<>(productsMap.values());
 	}
 
 	/**
