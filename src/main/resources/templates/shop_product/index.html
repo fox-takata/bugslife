@@ -155,7 +155,9 @@
           </td>
           <td th:text="${product.weight}"></td>
           <td th:text="${product.height}"></td>
-          <td th:text="${product.price}"></td>
+          <td
+            th:text="${product.price % 1 == 0 ? #strings.replace(product.price, '.0', '') : product.price}"
+          ></td>
           <td>
             <a
               class="btn btn-primary"

@@ -145,7 +145,7 @@ public class ProductService {
 						(String)result[2],
 						(Integer)result[3],
 						(Integer)result[4],
-						(Integer)result[5],
+						(Double)result[5],
 						categoryNames);
 				productsMap.put(productId, product);
 			}

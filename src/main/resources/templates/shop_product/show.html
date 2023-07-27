@@ -36,7 +36,9 @@
     </div>
     <div class="form-group">
       <label for="price">値段: </label>
-      <span th:text="${product.price}"></span>
+      <span
+        th:text="${product.price % 1 == 0 ? #strings.replace(product.price, '.0', '') : product.price}"
+      ></span>
     </div>
     <div class="form-group">
       <label for="rate">税率: </label>
