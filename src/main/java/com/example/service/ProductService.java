@@ -15,6 +15,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 
 import com.example.entity.ProductWithCategoryName;
@@ -64,8 +65,8 @@ public class ProductService {
 		final CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
 		final Root<Product> root = query.from(Product.class);
 
-		Join<Product, CategoryProduct> categoryProductJoin = root.joinList("categoryProducts");
-		Join<CategoryProduct, Category> categoryJoin = categoryProductJoin.join("category");
+		Join<Product, CategoryProduct> categoryProductJoin = root.joinList("categoryProducts", JoinType.LEFT);
+		Join<CategoryProduct, Category> categoryJoin = categoryProductJoin.join("category", JoinType.LEFT);
 
 		query.multiselect(
 				root.get("id"),
@@ -79,12 +80,14 @@ public class ProductService {
 		// formの値を元に検索条件を設定する
 		if (!StringUtils.isEmpty(form.getName())) {
 			// name で部分一致検索 (大文字・小文字を区別せず)
-			query.where(builder.like(builder.upper(root.get("name")), "%" + form.getName().toUpperCase() + "%"));
+			query.where(builder.like(builder.upper(root.get("name")), "%" +
+					form.getName().toUpperCase() + "%"));
 		}
 
 		if (!StringUtils.isEmpty(form.getCode())) {
 			// code で部分一致検索 (大文字・小文字を区別せず)
-			query.where(builder.like(builder.upper(root.get("code")), "%" + form.getCode().toUpperCase() + "%"));
+			query.where(builder.like(builder.upper(root.get("code")), "%" +
+					form.getCode().toUpperCase() + "%"));
 		}
 
 		if (form.getCategories() != null && form.getCategories().size() > 0) {
@@ -94,29 +97,37 @@ public class ProductService {
 
 		// height で範囲検索（1つまたは2つの値が指定されている場合）
 		if (form.getHeight1() != null && form.getHeight2() != null) {
-			query.where(builder.between(root.get("height"), form.getHeight1(), form.getHeight2()));
+			query.where(builder.between(root.get("height"), form.getHeight1(),
+					form.getHeight2()));
 		} else if (form.getHeight1() != null) {
-			query.where(builder.greaterThanOrEqualTo(root.get("height"), form.getHeight1()));
+			query.where(builder.greaterThanOrEqualTo(root.get("height"),
+					form.getHeight1()));
 		} else if (form.getHeight2() != null) {
-			query.where(builder.lessThanOrEqualTo(root.get("height"), form.getHeight2()));
+			query.where(builder.lessThanOrEqualTo(root.get("height"),
+					form.getHeight2()));
 		}
 
 		// weight で範囲検索（1つまたは2つの値が指定されている場合）
 		if (form.getWeight1() != null && form.getWeight2() != null) {
-			query.where(builder.between(root.get("weight"), form.getWeight1(), form.getWeight2()));
+			query.where(builder.between(root.get("weight"), form.getWeight1(),
+					form.getWeight2()));
 		} else if (form.getWeight1() != null) {
 			// If weight1 is provided but weight2 is empty, filter products with weights
 			// greater than or equal to weight1
-			query.where(builder.greaterThanOrEqualTo(root.get("weight"), form.getWeight1()));
+			query.where(builder.greaterThanOrEqualTo(root.get("weight"),
+					form.getWeight1()));
 		} else if (form.getWeight2() != null) {
-			query.where(builder.lessThanOrEqualTo(root.get("weight"), form.getWeight2()));
+			query.where(builder.lessThanOrEqualTo(root.get("weight"),
+					form.getWeight2()));
 		}
 
 		// price で範囲検索
 		if (form.getPrice1() != null && form.getPrice2() != null) {
-			query.where(builder.between(root.get("price"), form.getPrice1(), form.getPrice2()));
+			query.where(builder.between(root.get("price"), form.getPrice1(),
+					form.getPrice2()));
 		} else if (form.getPrice1() != null) {
-			query.where(builder.greaterThanOrEqualTo(root.get("price"), form.getPrice1()));
+			query.where(builder.greaterThanOrEqualTo(root.get("price"),
+					form.getPrice1()));
 		} else if (form.getPrice2() != null) {
 			query.where(builder.lessThanOrEqualTo(root.get("price"), form.getPrice2()));
 		}
@@ -130,6 +141,9 @@ public class ProductService {
 		for (Object[] result : results) {
 			Long productId = (Long)result[0];
 			String categoryName = (String)result[6];
+			if (categoryName == null) {
+				categoryName = ""; // カテゴリ名が空の場合、空の文字列を代わりに追加する
+			}
 
 			if (productsMap.containsKey(productId)) {
 				// 既に productsMap に同じIDの商品が存在する場合、その商品の categoryNames リストに新しいカテゴリー名を追加する
@@ -150,7 +164,6 @@ public class ProductService {
 				productsMap.put(productId, product);
 			}
 		}
-		System.out.println(new ArrayList<>(productsMap.values()).get(0));
 		// Map の値（ProductWithCategoryName オブジェクト）をリストに変換して返す
 		return new ArrayList<>(productsMap.values());
 	}
