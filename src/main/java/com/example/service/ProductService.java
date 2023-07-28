@@ -17,6 +17,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 import com.example.entity.ProductWithCategoryName;
 import com.example.form.ProductForm;
@@ -90,11 +91,6 @@ public class ProductService {
 					form.getCode().toUpperCase() + "%"));
 		}
 
-		if (form.getCategories() != null && form.getCategories().size() > 0) {
-			// categories で完全一致検索
-			query.where(categoryJoin.get("id").in(form.getCategories()));
-		}
-
 		// height で範囲検索（1つまたは2つの値が指定されている場合）
 		if (form.getHeight1() != null && form.getHeight2() != null) {
 			query.where(builder.between(root.get("height"), form.getHeight1(),
@@ -130,6 +126,21 @@ public class ProductService {
 					form.getPrice1()));
 		} else if (form.getPrice2() != null) {
 			query.where(builder.lessThanOrEqualTo(root.get("price"), form.getPrice2()));
+		}
+
+		// カテゴリ名の条件を組み立てる
+		if (form.getCategories() != null && !form.getCategories().isEmpty()) {
+			List<Long> selectedCategoryIds = form.getCategories();
+
+			// 選択されたカテゴリのIDが商品に含まれている数を集計するサブクエリ
+			Subquery<Long> subquery = query.subquery(Long.class);
+			Root<CategoryProduct> subRoot = subquery.from(CategoryProduct.class);
+			subquery.select(subRoot.get("product").get("id"))
+					.where(subRoot.get("category").get("id").in(selectedCategoryIds))
+					.groupBy(subRoot.get("product").get("id"))
+					.having(builder.equal(builder.count(subRoot.get("product").get("id")), selectedCategoryIds.size()));
+
+			query.where(root.get("id").in(subquery));
 		}
 
 		List<Object[]> results = entityManager.createQuery(query).getResultList();
