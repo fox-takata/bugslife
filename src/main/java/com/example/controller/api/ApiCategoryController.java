@@ -54,4 +54,10 @@ public class ApiCategoryController {
 		}
 	}
 
+	@GetMapping("/{categoryId}/categoryNames")
+	public ResponseEntity<List<String>> getCategoryNamesByCategoryId(@PathVariable Long categoryId) {
+		List<String> categoryNames = categoryProductService.getProductNamesByCategoryId(categoryId);
+		return ResponseEntity.ok(categoryNames);
+	}
+
 }
