@@ -32,6 +32,10 @@ public class OrderService {
 		return orderRepository.findAll();
 	}
 
+	public List<Order> findAllWithProducts() {
+		return orderRepository.findAllWithProducts();
+	}
+
 	public Optional<Order> findOne(Long id) {
 		return orderRepository.findById(id);
 	}
