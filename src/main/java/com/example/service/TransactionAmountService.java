@@ -112,8 +112,11 @@ public class TransactionAmountService {
 			}
 		}
 
-		// 表示はXXX千円とするので、1000で割って余りは切り捨てて丸める
-		sum = (int)Math.round((double)sum / 1000);
+		// ゼロを割ることを防ぐ
+		if (!(sum == 0)) {
+			// 表示はXXX千円とするので、1000で割って余りは切り捨てて丸める
+			sum = (int)Math.round((double)sum / 1000);
+		}
 
 		return sum;
 	}
@@ -135,8 +138,13 @@ public class TransactionAmountService {
 				expenseSum += tAmount.getPrice();
 			}
 		}
-		double ratio = incomSum / (expenseSum + incomSum);
-		return (int)Math.round(ratio * 100);
+		// ゼロで割ること割られることを防ぐ
+		if (incomSum == 0 || (expenseSum + incomSum) == 0) {
+			return 0;
+		} else {
+			double ratio = incomSum / (expenseSum + incomSum);
+			return (int)Math.round(ratio * 100);
+		}
 	}
 
 	/**
