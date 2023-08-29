@@ -80,7 +80,7 @@ public class TransactionAmountService {
 			return false;
 		}
 		// 支出の場合、金額が5億以下か
-		if (Objects.isNull(entity.getPlusMinus()) && entity.getPrice() > Validate.EXPENSE_PRICE_UPPER) {
+		if (entity.getPlusMinus() == false && (entity.getPrice() > Validate.EXPENSE_PRICE_UPPER)) {
 			return false;
 		}
 		// メモは1000文字以下か
