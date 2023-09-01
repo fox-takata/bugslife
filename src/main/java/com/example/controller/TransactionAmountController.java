@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -89,6 +90,7 @@ public class TransactionAmountController {
 	 * @param redirectAttributes
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping
 	public String create(@ModelAttribute TransactionAmount entity, BindingResult result,
 			RedirectAttributes redirectAttributes) {
@@ -139,6 +141,7 @@ public class TransactionAmountController {
 	 * @param redirectAttributes
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping
 	public String update(@Validated @ModelAttribute TransactionAmount entity, BindingResult result,
 			RedirectAttributes redirectAttributes) {
@@ -168,6 +171,7 @@ public class TransactionAmountController {
 	 * @param redirectAttributes リダイレクト先に値を渡す
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@DeleteMapping("/{id}")
 	public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
 		try {
@@ -190,6 +194,7 @@ public class TransactionAmountController {
 	 * @param redirectAttributes
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/{c_id}/upload_csv")
 	public String uploadCSVFile(@PathVariable("c_id") Long companyId, @RequestParam("csv_file") MultipartFile csvFile,
 			RedirectAttributes redirectAttributes) {
