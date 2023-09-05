@@ -77,7 +77,7 @@ public class ShopProductControllerTests {
 		product.setCode("42");
 		product.setWeight(42);
 		product.setHeight(42);
-		product.setPrice(42.0);
+		product.setPrice(42);
 		product.setTaxType(1);
 		productService.save(product);
 		mvc.perform(MockMvcRequestBuilders.get("/shops/" + shop.getId() + "/products/" + product.getId()))
@@ -177,15 +177,14 @@ public class ShopProductControllerTests {
 		product.setCode("42");
 		product.setWeight(42);
 		product.setHeight(42);
-		product.setPrice(42.0);
+		product.setPrice(42);
 		product.setTaxType(1);
 		productService.save(product);
 
 		mvc.perform(MockMvcRequestBuilders.get("/shops/" + shop.getId() + "/products/" + product.getId() + "/edit"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("shop_product/form"))
-				.andExpect(model().attribute("productForm",
-						SamePropertyValuesAs.samePropertyValuesAs(new ProductForm(product))));
+				.andExpect(model().attribute("productForm", SamePropertyValuesAs.samePropertyValuesAs(new ProductForm(product))));
 	}
 
 	/**
@@ -225,7 +224,7 @@ public class ShopProductControllerTests {
 		product.setCode("42");
 		product.setWeight(42);
 		product.setHeight(42);
-		product.setPrice(42.0);
+		product.setPrice(42);
 		product.setTaxType(1);
 		productService.save(product);
 
@@ -262,8 +261,7 @@ public class ShopProductControllerTests {
 	@Test
 	public void deleteInValidTest(@Autowired MockMvc mvc) throws Exception {
 		Assertions.assertThrows(ServletException.class, () -> mvc
-				.perform(MockMvcRequestBuilders.delete("/shops/1/products/999")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())));
+				.perform(MockMvcRequestBuilders.delete("/shops/1/products/999").with(SecurityMockMvcRequestPostProcessors.csrf())));
 	}
 
 	/**
@@ -283,7 +281,7 @@ public class ShopProductControllerTests {
 		product.setCode("42");
 		product.setWeight(42);
 		product.setHeight(42);
-		product.setPrice(42.0);
+		product.setPrice(42);
 		product.setTaxType(1);
 		productService.save(product);
 
