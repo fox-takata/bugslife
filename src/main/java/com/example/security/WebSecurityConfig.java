@@ -2,8 +2,10 @@ package com.example.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,8 +13,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
+// import org.springframework.security.web.csrf.CsrfTokenRequestMatcher;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class WebSecurityConfig {
 
@@ -46,7 +52,7 @@ public class WebSecurityConfig {
 				})
 				.exceptionHandling((exception) -> exception
 						.accessDeniedHandler((request, response, accessDeniedException) -> {
-							response.sendRedirect("/");
+							response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
 						}));
 
 		return http.build();
