@@ -72,20 +72,20 @@ public class TransactionAmountService {
 			return false;
 		}
 		// 金額が0以上か
-		if (entity.getPrice() <= 0) {
+		if (entity.getPrice() < 0) {
 			return false;
 		}
 		// 金額が10億円以下か
-		if (entity.getPrice() >= Validate.PRICE_UPPER) {
+		if (entity.getPrice() > Validate.PRICE_UPPER) {
 			return false;
 		}
 		// 支出の場合、金額が5億以下か
-		if (Objects.isNull(entity.getPlusMinus()) && entity.getPrice() >= Validate.EXPENSE_PRICE_UPPER) {
+		if (entity.getPlusMinus() == false && (entity.getPrice() > Validate.EXPENSE_PRICE_UPPER)) {
 			return false;
 		}
 		// メモは1000文字以下か
 		if (Objects.nonNull(entity.getMemo())) {
-			if (entity.getMemo().length() >= Validate.TEXT_LENGTH) {
+			if (entity.getMemo().length() > Validate.TEXT_MEMO_LENGTH) {
 				return false;
 			}
 		}
