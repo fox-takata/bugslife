@@ -50,6 +50,11 @@ public class ProductService {
 		return productRepository.findById(id);
 	}
 
+	public boolean isTaxType(Integer id) {
+		List<Product> products = productRepository.findByTaxType(id);
+		return products.isEmpty();
+	}
+
 	@Transactional(readOnly = false)
 	public Product save(Product entity) {
 		return productRepository.save(entity);
@@ -186,13 +191,13 @@ public class ProductService {
 	 * @return
 	 */
 	@Transactional(readOnly = false)
-	public Product save(ProductForm entity) {
+	public Product save(ProductForm entity, TaxTypeService taxTypeService) {
 		// 紐づくカテゴリを事前に取得
 		List<CategoryProduct> categoryProducts = entity.getId() != null
 				? categoryProductRepository.findByProductId(entity.getId())
 				: new ArrayList<>();
 
-		Product product = new Product(entity);
+		Product product = new Product(entity, taxTypeService);
 		productRepository.save(product);
 
 		// 未処理のカテゴリーIDのリスト

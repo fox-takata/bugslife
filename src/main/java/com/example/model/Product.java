@@ -5,6 +5,7 @@ import java.lang.String;
 import java.util.List;
 
 import com.example.form.ProductForm;
+import com.example.service.TaxTypeService;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,7 +56,7 @@ public class Product extends TimeEntity implements Serializable {
 
 	public Product() {}
 
-	public Product(ProductForm form) {
+	public Product(ProductForm form, TaxTypeService taxTypeService) {
 		if (form.getId() != null) {
 			this.setId(form.getId());
 		}
@@ -65,7 +66,7 @@ public class Product extends TimeEntity implements Serializable {
 		this.setWeight(form.getWeight());
 		this.setHeight(form.getHeight());
 		this.setPrice(form.getPrice());
-		this.setTaxType(form.getTaxType());
+		this.setTaxType(form.getTaxType(taxTypeService));
 	}
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

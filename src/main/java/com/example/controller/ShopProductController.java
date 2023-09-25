@@ -19,14 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.constants.Message;
-import com.example.constants.TaxType;
+// import com.example.constants.TaxType;
 import com.example.entity.ProductWithCategoryName;
 import com.example.form.ProductForm;
 import com.example.form.ProductSearchForm;
 import com.example.model.Category;
 import com.example.model.Product;
+import com.example.model.TaxType;
 import com.example.service.CategoryService;
 import com.example.service.ProductService;
+import com.example.service.TaxTypeService;
 
 @Controller
 @RequestMapping("/shops/{shopId}/products")
@@ -38,6 +40,8 @@ public class ShopProductController {
 	@Autowired
 	private CategoryService categoryService;
 
+	@Autowired
+	private TaxTypeService taxTypeService;
 
 	@GetMapping
 	public String index(Model model, @PathVariable("shopId") Long shopId, @ModelAttribute ProductSearchForm request) {
@@ -53,11 +57,12 @@ public class ShopProductController {
 	@GetMapping("/{id}")
 	public String show(Model model, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
 		if (id != null) {
-			Optional<Product> product = productService.findOne(id);
+			Product product = productService.findOne(id).get();
 			List<Category> categories = categoryService.findAll();
 			model.addAttribute("categories", categories);
-			model.addAttribute("product", product.get());
-			model.addAttribute("tax", TaxType.get(product.get().getTaxType()));
+			model.addAttribute("product", product);
+			TaxType taxType = taxTypeService.findOne(product.getTaxType().longValue()).get();
+			model.addAttribute("tax", taxType);
 			model.addAttribute("shopId", shopId);
 		}
 		return "shop_product/show";
@@ -73,7 +78,8 @@ public class ShopProductController {
 	}
 
 	@PostMapping
-	public String create(Model model, @PathVariable("shopId") Long shopId, @Validated @ModelAttribute ProductForm productForm,
+	public String create(Model model, @PathVariable("shopId") Long shopId,
+			@Validated @ModelAttribute ProductForm productForm,
 			BindingResult result, RedirectAttributes redirectAttributes) {
 		// バリデーションチェック
 		if (result.hasErrors()) {
@@ -86,7 +92,7 @@ public class ShopProductController {
 
 		Product product = null;
 		try {
-			product = productService.save(productForm);
+			product = productService.save(productForm, taxTypeService);
 			redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_INSERT);
 			return "redirect:/shops/{shopId}/products/" + product.getId();
 		} catch (Exception e) {
@@ -100,10 +106,10 @@ public class ShopProductController {
 	public String update(Model model, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
 		try {
 			if (id != null) {
-				Optional<Product> entity = productService.findOne(id);
+				Product entity = productService.findOne(id).get();
 				List<Category> categories = categoryService.findAll();
 				model.addAttribute("categories", categories);
-				model.addAttribute("productForm", new ProductForm(entity.get()));
+				model.addAttribute("productForm", new ProductForm(entity, taxTypeService));
 				model.addAttribute("shopId", shopId);
 			}
 		} catch (Exception e) {
@@ -113,8 +119,9 @@ public class ShopProductController {
 	}
 
 	@PutMapping
-	public String update(Model model, @PathVariable("shopId") Long shopId, @Validated @ModelAttribute ProductForm productForm,
-			BindingResult result,RedirectAttributes redirectAttributes) {
+	public String update(Model model, @PathVariable("shopId") Long shopId,
+			@Validated @ModelAttribute ProductForm productForm,
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		System.out.append(Message.MSG_ERROR, 0, 0);
 		// バリデーションチェック
 		if (result.hasErrors()) {
@@ -127,7 +134,7 @@ public class ShopProductController {
 
 		Product product = null;
 		try {
-			product = productService.save(productForm);
+			product = productService.save(productForm, taxTypeService);
 			redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_UPDATE);
 			return "redirect:/shops/{shopId}/products/" + product.getId();
 		} catch (Exception e) {
