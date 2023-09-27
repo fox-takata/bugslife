@@ -62,3 +62,4 @@ mvn -B package --file pom.xml
 - [Shop](./docs/shops.md)
 - [Product](./docs/products.md)
 - [Order](./docs/orders.md)
+- [TaxType](./docs/tax.md)
