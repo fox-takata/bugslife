@@ -1,10 +1,16 @@
 package com.example.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,16 +22,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.nio.file.Path;
 
 import com.example.constants.Message;
 import com.example.enums.OrderStatus;
 import com.example.enums.PaymentMethod;
 import com.example.enums.PaymentStatus;
 import com.example.form.OrderForm;
+import com.example.form.OrderPaymentForm;
+import com.example.dto.OrderPaymentDataListDto;
+
 import com.example.model.Order;
 import com.example.service.OrderService;
 import com.example.service.ProductService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/orders")
@@ -36,6 +50,14 @@ public class OrderController {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private OrderPaymentDataListDto orderPaymentListDto;
+
+	@ModelAttribute
+	OrderPaymentDataListDto setFormDto() {
+		return new OrderPaymentDataListDto();
+	}
 
 	@GetMapping
 	public String index(Model model) {
@@ -133,6 +155,91 @@ public class OrderController {
 			redirectAttributes.addFlashAttribute("error", Message.MSG_ERROR);
 			e.printStackTrace();
 			return "redirect:/orders";
+		}
+	}
+
+	@GetMapping("/payment")
+	public String showOrderPaymentPage(Model model) {
+		// ここで必要なデータをモデルに追加する処理を行う
+		// 例えば、CSVの読み込み結果やバリデーションエラーなどのデータをモデルに追加する
+
+		// 仮のデータをモデルに追加する例（実際のデータを追加してください）
+		// model.addAttribute("validationError", null); // バリデーションエラー
+		model.addAttribute("orderPaymentData", null); // CSVの読み込み内容
+		return "order/payment"; // Thymeleafテンプレートの名前を返す
+	}
+
+	/**
+	 * CSVインポート処理
+	 *
+	 * @param uploadFile
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@PostMapping("/payment/upload")
+	public String uploadFile(@RequestParam("file") MultipartFile uploadFile, RedirectAttributes redirectAttributes,
+			Model model) {
+		if (uploadFile.isEmpty()) {
+			// ファイルが存在しない場合
+			redirectAttributes.addFlashAttribute("error", "ファイルを選択してください。");
+			return "redirect:/orders/payment"; // 適切なリダイレクト先に修正する
+		}
+		if (!"text/csv".equals(uploadFile.getContentType())) {
+			// CSVファイル以外の場合
+			redirectAttributes.addFlashAttribute("error", "CSVファイルを選択してください。");
+			return "redirect:/orders/payment"; // 適切なリダイレクト先に修正する
+		}
+		try {
+			List<OrderPaymentForm> orderPaymentList = orderService.parseCsvFilePayment(uploadFile);// インポート処理を行うメソッドを呼び出す
+			OrderPaymentDataListDto orderPaymentListDto = new OrderPaymentDataListDto(); // この行を追加
+
+			orderPaymentListDto.setOrderPaymentList(orderPaymentList);
+
+			model.addAttribute("orderPaymentData", orderPaymentListDto);
+			// redirectAttributes.addFlashAttribute("orderShippingList", orderShippingList);
+			// redirectAttributes.addFlashAttribute("success", "CSVファイルのインポートに成功しました。");
+			model.addAttribute("success", "CSVファイルのインポートに成功しました。");
+			return "order/payment"; // 適切なリダイレクト先に修正する
+			// return "redirect:/orders/shipping";
+		} catch (Throwable e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			e.printStackTrace();
+			return "redirect:/orders/payment"; // 適切なリダイレクト先に修正する
+		}
+
+		// return "redirect:/orders/shipping"; // 適切なリダイレクト先に修正する
+
+	}
+
+	// 入金情報の更新
+	@PutMapping("/payment/update")
+	public String updatePaymentInfo(@ModelAttribute("orderPaymentData") OrderPaymentDataListDto orderPaymentData,
+			Model model) {
+		OrderPaymentDataListDto updatedListDto = orderService.updatePaymentInfo(orderPaymentData);
+		model.addAttribute("orderPaymentData", updatedListDto);
+		model.addAttribute("success", "出荷情報を更新しました。");
+
+		return "order/payment";
+	}
+
+	@PostMapping("/payment/download")
+	public void download(HttpServletResponse response) {
+		try (OutputStream os = response.getOutputStream();) {
+			Path filePath = new ClassPathResource("static/templates/order_payment_data.csv").getFile().toPath();
+			byte[] templateData = Files.readAllBytes(filePath);
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+			String formattedDateTime = now.format(formatter);
+			String attachment = "attachment; filename=order_payment_" +
+					formattedDateTime + ".csv";
+
+			response.setContentType("text/csv");
+			response.setHeader("Content-Disposition", attachment);
+			response.setContentLength(templateData.length);
+			os.write(templateData);
+			os.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

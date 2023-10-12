@@ -36,4 +36,7 @@ public class OrderPayment extends TimeEntity implements Serializable {
 
 	@Column(name = "paid_at", nullable = false)
 	private Timestamp paidAt;
+
+	@Column(name = "order_id", nullable = false)
+	private Long orderId;
 }
