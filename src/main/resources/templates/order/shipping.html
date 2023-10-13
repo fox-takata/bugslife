@@ -5,7 +5,7 @@
   layout:decorate="~{layout/layout}"
 >
   <th:block layout:fragment="content">
-    <h1>受注 一括発送</h1>
+    <h1>受注 一括で発送</h1>
     <hr />
     <a th:href="@{/orders}" class="btn btn-default">Back</a><br /><br />
 
@@ -55,7 +55,7 @@
       <!-- チェックを入れたデータのみ出荷済みに更新する -->
       <form
         th:action="@{/orders/shipping}"
-        th:method="'put'"
+        th:method="@{'put'}"
         th:object="${orderShippingData}"
       >
         <button type="submit" class="btn btn-success">出荷情報更新</button>
@@ -132,6 +132,19 @@
             </tr>
           </tbody>
         </table>
+      </form>
+      <!-- POSTリクエストを送信するフォーム -->
+      <form
+        id="postForm"
+        th:action="@{/orders/shipping/noShippDownload}"
+        th:method="post"
+      >
+        <input
+          type="hidden"
+          name="orderShippingData"
+          th:value="${orderShippingData}"
+        />
+        <button type="submit">未発送かつ受注済みのみCSV形式ダウンロード</button>
       </form>
     </div>
   </th:block>
