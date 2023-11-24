@@ -214,6 +214,7 @@ public class TransactionAmountController {
 		// csvファイルのインポート処理
 		try {
 			transactionAmountService.importCSV(csvFile, companyId);
+			redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_UPLOAD);
 		} catch (Throwable t) {
 			redirectAttributes.addFlashAttribute("error", t.getMessage());
 			t.printStackTrace();

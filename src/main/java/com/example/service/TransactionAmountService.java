@@ -2,6 +2,7 @@ package com.example.service;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.constants.Validate;
@@ -156,6 +157,7 @@ public class TransactionAmountService {
 	 * @return void
 	 * @todo 非同期化
 	 */
+	@Async
 	@Transactional
 	public void importCSV(MultipartFile file, Long companyId) throws Exception {
 		// アップデート後のインスタンス
