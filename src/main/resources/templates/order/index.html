@@ -31,7 +31,7 @@
         <tr th:each="order : ${listOrder}">
           <td th:text="${order.customerId}"></td>
           <td>
-            <th:block th:each="orderProduct : ${order.orderProducts}">
+            <th:block th:each="orderProduct : ${order.getOrderProducts()}">
               <div>
                 <span th:text="${orderProduct.name}"></span> /
                 <span th:text="${orderProduct.quantity}"></span>
