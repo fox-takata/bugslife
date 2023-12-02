@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.model.Category;
 import com.example.model.CategoryProduct;
 import com.example.model.Product;
+import com.example.model.TaxType;
 import com.example.repository.CategoryProductRepository;
 import com.example.repository.ProductRepository;
 
@@ -53,6 +54,17 @@ public class ProductService {
 	public boolean isTaxType(Integer id) {
 		List<Product> products = productRepository.findByTaxType(id);
 		return products.isEmpty();
+	}
+
+	public boolean isTaxTypeList(List<TaxType> taxs) {
+		boolean isTaxTypeList = true;
+		for (TaxType tax : taxs) {
+			List<Product> products = productRepository.findByTaxType(tax.getId().intValue());
+			if (!products.isEmpty()) {
+				isTaxTypeList = false;
+			}
+		}
+		return isTaxTypeList;
 	}
 
 	@Transactional(readOnly = false)
@@ -197,7 +209,7 @@ public class ProductService {
 				? categoryProductRepository.findByProductId(entity.getId())
 				: new ArrayList<>();
 
-		Product product = new Product(entity, taxTypeService);
+		Product product = new Product(entity);
 		productRepository.save(product);
 
 		// 未処理のカテゴリーIDのリスト

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.constants.Message;
-// import com.example.constants.TaxType;
 import com.example.entity.ProductWithCategoryName;
 import com.example.form.ProductForm;
 import com.example.form.ProductSearchForm;
@@ -57,12 +56,12 @@ public class ShopProductController {
 	@GetMapping("/{id}")
 	public String show(Model model, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
 		if (id != null) {
-			Product product = productService.findOne(id).get();
+			Optional<Product> product = productService.findOne(id);
 			List<Category> categories = categoryService.findAll();
 			model.addAttribute("categories", categories);
-			model.addAttribute("product", product);
-			TaxType taxType = taxTypeService.findOne(product.getTaxType().longValue()).get();
-			model.addAttribute("tax", taxType);
+			model.addAttribute("product", product.get());
+			Optional<TaxType> taxType = taxTypeService.findOne(product.get().getTaxType().longValue());
+			model.addAttribute("tax", taxType.get());
 			model.addAttribute("shopId", shopId);
 		}
 		return "shop_product/show";
@@ -106,10 +105,10 @@ public class ShopProductController {
 	public String update(Model model, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
 		try {
 			if (id != null) {
-				Product entity = productService.findOne(id).get();
+				Optional<Product> entity = productService.findOne(id);
 				List<Category> categories = categoryService.findAll();
 				model.addAttribute("categories", categories);
-				model.addAttribute("productForm", new ProductForm(entity, taxTypeService));
+				model.addAttribute("productForm", new ProductForm(entity.get()));
 				model.addAttribute("shopId", shopId);
 			}
 		} catch (Exception e) {

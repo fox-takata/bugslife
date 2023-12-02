@@ -1,12 +1,13 @@
 package com.example.form;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 // import com.example.constants.TaxType;
 import com.example.model.TaxType;
+import com.example.service.TaxTypeService;
 
 // import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,11 +17,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TaxTypeForm {
 
-	private Long id;
+	@Autowired
+	private TaxTypeService taxTypeService;
 
-	@NotBlank(message = "名称を入力してください。")
-	@Size(max = 2000, message = "名前は2000文字以内で入力してください。")
-	private String name;
+	private Long id;
 
 	@NotNull(message = "税率を選択してください。")
 	private Integer rate;
@@ -33,14 +33,13 @@ public class TaxTypeForm {
 
 	public TaxTypeForm(TaxType taxType) {
 		this.setId(taxType.getId());
-		this.setName(taxType.getName());
 		this.setRate(taxType.getRate());
 		this.setTaxIncluded(taxType.getTaxIncluded());
 		this.setRounding(taxType.getRounding());
 	}
 
-	// public Integer getTaxType() {
-	// var tax = TaxType.get(rate, taxIncluded, rounding);
-	// return tax.id;
-	// }
+	public Integer getTaxType() {
+		Long tax = taxTypeService.findIdRateIncRound(rate, taxIncluded, rounding);
+		return tax.intValue();
+	}
 }

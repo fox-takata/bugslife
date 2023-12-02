@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-// import com.example.constants.TaxType;
 import com.example.model.CategoryProduct;
 import com.example.model.Product;
 import com.example.model.TaxType;
@@ -62,7 +61,7 @@ public class ProductForm {
 	@NotNull(message = "端数処理を選択してください。")
 	private String rounding = "floor";
 
-	public ProductForm(Product product, TaxTypeService taxTypeService) {
+	public ProductForm(Product product) {
 		this.setId(product.getId());
 		this.setShopId(product.getShopId());
 		this.setName(product.getName());
@@ -77,17 +76,17 @@ public class ProductForm {
 		this.setWeight(product.getWeight());
 		this.setHeight(product.getHeight());
 		this.setPrice(product.getPrice());
-		this.taxTypeService = taxTypeService;
-		TaxType tax = taxTypeService.findOne(product.getTaxType().longValue()).get();
 
+		// TaxTypeオブジェクトを取得
+		TaxType tax = product.getTax();
 		this.setRate(tax.getRate());
 		this.setTaxIncluded(tax.getTaxIncluded());
 		this.setRounding(tax.getRounding());
 	}
 
-	public Integer getTaxType(TaxTypeService taxTypeService) {
-		this.taxTypeService = taxTypeService;
+	public Integer getTaxType() {
 		Long taxId = taxTypeService.findIdRateIncRound(rate, taxIncluded, rounding);
 		return taxId.intValue();
 	}
+
 }

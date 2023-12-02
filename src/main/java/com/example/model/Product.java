@@ -56,7 +56,7 @@ public class Product extends TimeEntity implements Serializable {
 
 	public Product() {}
 
-	public Product(ProductForm form, TaxTypeService taxTypeService) {
+	public Product(ProductForm form) {
 		if (form.getId() != null) {
 			this.setId(form.getId());
 		}
@@ -66,7 +66,7 @@ public class Product extends TimeEntity implements Serializable {
 		this.setWeight(form.getWeight());
 		this.setHeight(form.getHeight());
 		this.setPrice(form.getPrice());
-		this.setTaxType(form.getTaxType(taxTypeService));
+		this.setTaxType(form.getTaxType());
 	}
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -75,4 +75,8 @@ public class Product extends TimeEntity implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
 	private Shop shop;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tax_type", insertable = false, updatable = false)
+	private TaxType tax;
 }
