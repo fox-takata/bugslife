@@ -51,11 +51,6 @@ public class ProductService {
 		return productRepository.findById(id);
 	}
 
-	public boolean isTaxType(Integer id) {
-		List<Product> products = productRepository.findByTaxType(id);
-		return products.isEmpty();
-	}
-
 	public boolean isTaxTypeList(List<TaxType> taxs) {
 		boolean isTaxTypeList = true;
 		for (TaxType tax : taxs) {
@@ -203,7 +198,7 @@ public class ProductService {
 	 * @return
 	 */
 	@Transactional(readOnly = false)
-	public Product save(ProductForm entity, TaxTypeService taxTypeService) {
+	public Product save(ProductForm entity) {
 		// 紐づくカテゴリを事前に取得
 		List<CategoryProduct> categoryProducts = entity.getId() != null
 				? categoryProductRepository.findByProductId(entity.getId())

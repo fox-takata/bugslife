@@ -78,8 +78,8 @@ public class ShopProductController {
 
 	@PostMapping
 	public String create(Model model, @PathVariable("shopId") Long shopId,
-			@Validated @ModelAttribute ProductForm productForm,
-			BindingResult result, RedirectAttributes redirectAttributes) {
+			@Validated @ModelAttribute ProductForm productForm, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 		// バリデーションチェック
 		if (result.hasErrors()) {
 			List<Category> categories = categoryService.findAll();
@@ -91,7 +91,7 @@ public class ShopProductController {
 
 		Product product = null;
 		try {
-			product = productService.save(productForm, taxTypeService);
+			product = productService.save(productForm);
 			redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_INSERT);
 			return "redirect:/shops/{shopId}/products/" + product.getId();
 		} catch (Exception e) {
@@ -133,7 +133,7 @@ public class ShopProductController {
 
 		Product product = null;
 		try {
-			product = productService.save(productForm, taxTypeService);
+			product = productService.save(productForm);
 			redirectAttributes.addFlashAttribute("success", Message.MSG_SUCESS_UPDATE);
 			return "redirect:/shops/{shopId}/products/" + product.getId();
 		} catch (Exception e) {

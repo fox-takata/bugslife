@@ -29,7 +29,6 @@ import com.example.model.Product;
 import com.example.model.Shop;
 import com.example.service.ProductService;
 import com.example.service.ShopService;
-import com.example.service.TaxTypeService;
 
 /**
  * ShopProductControllerのテストクラス
@@ -43,9 +42,6 @@ public class ShopProductControllerTests {
 
 	@Autowired
 	private ShopService shopService;
-
-	@Autowired
-	private TaxTypeService taxTypeService;
 
 	/**
 	 * get indexのテスト
@@ -189,7 +185,7 @@ public class ShopProductControllerTests {
 				.andExpect(status().isOk())
 				.andExpect(view().name("shop_product/form"))
 				.andExpect(model().attribute("productForm",
-						SamePropertyValuesAs.samePropertyValuesAs(new ProductForm(product, taxTypeService))));
+						SamePropertyValuesAs.samePropertyValuesAs(new ProductForm(product))));
 	}
 
 	/**
