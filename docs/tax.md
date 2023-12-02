@@ -30,4 +30,3 @@
 | rate         | Integer |    ○     |      |
 | rounding     | Boolean |    ○     |      |
 | tax_included | Integer |    ○     |      |
-| name         | String  |          | TEXT |
