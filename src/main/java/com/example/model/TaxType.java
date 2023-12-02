@@ -26,9 +26,6 @@ public class TaxType extends TimeEntity implements Serializable {
 	@Column(name = "rate", nullable = false)
 	private Integer rate;
 
-	@Column(name = "name", columnDefinition = "TEXT")
-	private String name;
-
 	@Column(name = "tax_included", nullable = false)
 	private Boolean taxIncluded;
 

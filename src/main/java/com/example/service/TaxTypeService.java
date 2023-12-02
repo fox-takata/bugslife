@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,27 +16,42 @@ public class TaxTypeService {
 	@Autowired
 	private TaxTypeRepository taxTypeRepository;
 
-	public List<TaxType> findAll() {
-		return taxTypeRepository.findAll();
+	// TaxRepositoryからrateの一覧を取得するメソッド
+	public List<Integer> findAllRates() {
+		return taxTypeRepository.findAllRates();
+	}
+
+	public List<TaxType> findByRate(Integer rate) {
+		return taxTypeRepository.findByRate(rate);
 	}
 
 	public Optional<TaxType> findOne(Long id) {
 		return taxTypeRepository.findById(id);
 	}
 
-	public TaxType save(TaxType taxType) {
-		String name = "税率：" + taxType.getRate() + "% , 入力価格：" + taxType.getIncudedName() + " , 端数処理："
-				+ taxType.getRoundName();
-		taxType.setName(name);
-		return taxTypeRepository.save(taxType);
+	public void saveAllCombinations(TaxType taxType) {
+		List<TaxType> taxTypeList = new ArrayList<>();
+
+		String[] roundings = { "floor", "round", "ceil" };
+		Boolean[] taxIncludeds = { false, true };
+
+		for (Boolean taxIncluded : taxIncludeds) {
+			for (String rounding : roundings) {
+				TaxType newTaxType = new TaxType();
+				newTaxType.setRate(taxType.getRate());
+				newTaxType.setRounding(rounding);
+				newTaxType.setTaxIncluded(taxIncluded);
+				taxTypeList.add(newTaxType);
+			}
+		}
+		taxTypeRepository.saveAll(taxTypeList);
 	}
 
-	public void delete(TaxType taxType) {
-		taxTypeRepository.delete(taxType);
+	public void deletes(List<TaxType> taxTypes) {
+		taxTypeRepository.deleteAll(taxTypes);
 	}
 
 	public Long findIdRateIncRound(Integer rate, Boolean taxIncluded, String rounding) {
-		System.out.println("結果" + taxTypeRepository.findIdByRateAndTaxIncludedAndRounding(rate, taxIncluded, rounding));
 		return taxTypeRepository.findIdByRateAndTaxIncludedAndRounding(rate, taxIncluded, rounding);
 	}
 
