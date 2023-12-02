@@ -77,8 +77,8 @@ public class ShopProductController {
 	}
 
 	@PostMapping
-	public String create(Model model, @PathVariable("shopId") Long shopId, @Validated @ModelAttribute ProductForm productForm, BindingResult result,
-			RedirectAttributes redirectAttributes) {
+	public String create(Model model, @PathVariable("shopId") Long shopId, @Validated @ModelAttribute ProductForm productForm,
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		// バリデーションチェック
 		if (result.hasErrors()) {
 			List<Category> categories = categoryService.findAll();
@@ -118,7 +118,7 @@ public class ShopProductController {
 
 	@PutMapping
 	public String update(Model model, @PathVariable("shopId") Long shopId, @Validated @ModelAttribute ProductForm productForm,
-			BindingResult result, RedirectAttributes redirectAttributes) {
+			BindingResult result,RedirectAttributes redirectAttributes) {
 		System.out.append(Message.MSG_ERROR, 0, 0);
 		// バリデーションチェック
 		if (result.hasErrors()) {
