@@ -4,46 +4,36 @@
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{layout/layout}"
 >
-<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
   <th:block layout:fragment="content">
-    <h1>税タイプ一覧</h1>
+    <h1>税率一覧</h1>
     <hr />
     <a th:href="@{/taxType/new}">税率新規作成</a><br /><br />
 
     <table class="table tax-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>名称</th>
           <th>税率</th>
-          <th>入力価格</th>
-          <th>端数処理</th>
+          <th>6件一括処理</th>
         </tr>
       </thead>
       <tbody>
-        <tr th:each="tax : ${listTax}">
-          <td th:text="${tax.id}"></td>
-          <td th:text="${tax.name}"></td>
-          <td th:text="${tax.rate} + ' %' "></td>
-          <td th:text="${tax.taxIncluded ? '税込み' : '税抜き'}"></td>
-          <td th:text="${tax.rounding == 'floor' ? '切り捨て' : (tax.rounding == 'ceil' ? '切り上げ' : '四捨五入')}"></td>
+        <tr th:each="rate : ${rateAll}">
+          <td th:text="${rate} + ' %' "></td>
           <td>
             <a
               class="btn btn-primary"
-              th:href="@{/taxType/{id}(id = ${tax.id})}"
+              th:href="@{/taxType/{rate}(rate = ${rate})}"
               >詳細</a
-            >
-            <a
-              class="btn btn-secondary"
-              th:href="@{/taxType/{id}/edit(id = ${tax.id})}"
-              >編集</a
             >
             <form
               class="d-inline"
-              th:action="@{/taxType/{id}(id = ${tax.id})}"
+              th:action="@{/taxType/{rate}(rate = ${rate})}"
               th:method="delete"
             >
               <button class="btn btn-danger" type="submit">削除</button>
+            </form>
+          </td>
         </tr>
       </tbody>
     </table>
