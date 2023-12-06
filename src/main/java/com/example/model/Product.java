@@ -74,4 +74,8 @@ public class Product extends TimeEntity implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
 	private Shop shop;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tax_type", insertable = false, updatable = false)
+	private TaxType tax;
 }

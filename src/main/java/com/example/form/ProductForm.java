@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.example.constants.TaxType;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.example.model.CategoryProduct;
 import com.example.model.Product;
+import com.example.model.TaxType;
+import com.example.service.TaxTypeService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -20,6 +23,9 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class ProductForm {
+
+	@Autowired
+	private TaxTypeService taxTypeService;
 
 	private Long id;
 
@@ -47,13 +53,13 @@ public class ProductForm {
 	private Double price;
 
 	@NotNull(message = "税率を選択してください。")
-	private Integer rate = TaxType.RATE_10;
+	private Integer rate = 10;
 
 	@NotNull(message = "入力価格を選択してください。")
 	private Boolean taxIncluded = false;
 
 	@NotNull(message = "端数処理を選択してください。")
-	private String rounding = TaxType.ROUND;
+	private String rounding = "floor";
 
 	public ProductForm(Product product) {
 		this.setId(product.getId());
@@ -70,14 +76,17 @@ public class ProductForm {
 		this.setWeight(product.getWeight());
 		this.setHeight(product.getHeight());
 		this.setPrice(product.getPrice());
-		var tax = TaxType.get(product.getTaxType());
-		this.setRate(tax.rate);
-		this.setTaxIncluded(tax.taxIncluded);
-		this.setRounding(tax.rounding);
+
+		// TaxTypeオブジェクトを取得
+		TaxType tax = product.getTax();
+		this.setRate(tax.getRate());
+		this.setTaxIncluded(tax.getTaxIncluded());
+		this.setRounding(tax.getRounding());
 	}
 
 	public Integer getTaxType() {
-		var tax = TaxType.get(rate, taxIncluded, rounding);
-		return tax.id;
+		Long taxId = taxTypeService.findIdRateIncRound(rate, taxIncluded, rounding);
+		return taxId.intValue();
 	}
+
 }

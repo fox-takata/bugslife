@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.model.Category;
 import com.example.model.CategoryProduct;
 import com.example.model.Product;
+import com.example.model.TaxType;
 import com.example.repository.CategoryProductRepository;
 import com.example.repository.ProductRepository;
 
@@ -48,6 +49,17 @@ public class ProductService {
 
 	public Optional<Product> findOne(Long id) {
 		return productRepository.findById(id);
+	}
+
+	public boolean isTaxTypeList(List<TaxType> taxs) {
+		boolean isTaxTypeList = true;
+		for (TaxType tax : taxs) {
+			List<Product> products = productRepository.findByTaxType(tax.getId().intValue());
+			if (!products.isEmpty()) {
+				isTaxTypeList = false;
+			}
+		}
+		return isTaxTypeList;
 	}
 
 	@Transactional(readOnly = false)

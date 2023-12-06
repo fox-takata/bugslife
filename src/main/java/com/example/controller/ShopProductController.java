@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.constants.Message;
-import com.example.constants.TaxType;
 import com.example.entity.ProductWithCategoryName;
 import com.example.form.ProductForm;
 import com.example.form.ProductSearchForm;
@@ -57,7 +56,7 @@ public class ShopProductController {
 			List<Category> categories = categoryService.findAll();
 			model.addAttribute("categories", categories);
 			model.addAttribute("product", product.get());
-			model.addAttribute("tax", TaxType.get(product.get().getTaxType()));
+			model.addAttribute("tax", product.get().getTax());
 			model.addAttribute("shopId", shopId);
 		}
 		return "shop_product/show";
