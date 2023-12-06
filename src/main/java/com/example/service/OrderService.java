@@ -11,7 +11,6 @@ import com.example.model.OrderPayment;
 import com.example.model.OrderProduct;
 import com.example.repository.OrderRepository;
 import com.example.repository.ProductRepository;
-import com.example.repository.TaxTypeRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -27,9 +26,6 @@ public class OrderService {
 
 	@Autowired
 	private ProductRepository productRepository;
-
-	@Autowired
-	private TaxTypeRepository taxTypeRepository;
 
 	public List<Order> findAll() {
 		return orderRepository.findAll();
@@ -65,7 +61,7 @@ public class OrderService {
 			orderProduct.setQuantity(p.getQuantity());
 			orderProduct.setPrice((double)product.getPrice());
 			orderProduct.setDiscount(p.getDiscount());
-			orderProduct.setTaxType(taxTypeRepository.findById(product.getTaxType().longValue()).get());
+			orderProduct.setTaxType(product.getTax());
 			orderProducts.add(orderProduct);
 		});
 

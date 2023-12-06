@@ -24,10 +24,8 @@ import com.example.form.ProductForm;
 import com.example.form.ProductSearchForm;
 import com.example.model.Category;
 import com.example.model.Product;
-import com.example.model.TaxType;
 import com.example.service.CategoryService;
 import com.example.service.ProductService;
-import com.example.service.TaxTypeService;
 
 @Controller
 @RequestMapping("/shops/{shopId}/products")
@@ -39,8 +37,6 @@ public class ShopProductController {
 	@Autowired
 	private CategoryService categoryService;
 
-	@Autowired
-	private TaxTypeService taxTypeService;
 
 	@GetMapping
 	public String index(Model model, @PathVariable("shopId") Long shopId, @ModelAttribute ProductSearchForm request) {
@@ -60,8 +56,7 @@ public class ShopProductController {
 			List<Category> categories = categoryService.findAll();
 			model.addAttribute("categories", categories);
 			model.addAttribute("product", product.get());
-			Optional<TaxType> taxType = taxTypeService.findOne(product.get().getTaxType().longValue());
-			model.addAttribute("tax", taxType.get());
+			model.addAttribute("tax", product.get().getTax());
 			model.addAttribute("shopId", shopId);
 		}
 		return "shop_product/show";
